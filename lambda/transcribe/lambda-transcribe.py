@@ -5,7 +5,7 @@ import os
 
 def lambda_handler(event, context):
 
-    print(json.dumps(event))
+
     
     record = event['Records'][0]
     
@@ -26,7 +26,7 @@ def lambda_handler(event, context):
         OutputKey=outputKey
     )
     
-    print (json.dumps(response, default=str))
+ 
     
     return {
         'TranscriptionJobName': response['TranscriptionJob']['TranscriptionJobName']
