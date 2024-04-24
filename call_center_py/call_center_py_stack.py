@@ -146,4 +146,7 @@ class CallCenterPyStack(Stack):
         transcribe_event.add_target(targets.LambdaFunction(handler=functionSummarizeText))                                                                             
 
         CfnOutput(self, "Upload Audio File To This S3 bucket", value=sourceBucket.bucket_name)
-        CfnOutput(self, "The Bucket Created In Region", value=sourceBucket.bucket_regional_domain_name)
+        CfnOutput(self, "The Dynamo DB Table", value=table.table_name)
+        CfnOutput(self, "The EventBridge Rule", value=transcribe_event.rule_name)
+        CfnOutput(self, "Transcription Job Lambda", value=functionAudionToText.function_name)
+        CfnOutput(self, "Summarization Lambda", value=functionSummarizeText.function_name)
