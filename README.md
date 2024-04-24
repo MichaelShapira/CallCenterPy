@@ -1,58 +1,43 @@
 
-# Welcome to your CDK Python project!
+# AWS CDK Project to deploy the solution to transcribe and summarize call center calls between agents and customers
 
-This is a blank project for CDK development with Python.
+This repository represents the AWS CDK project, which, once deployed, provides a basec solution to transcribe the call between the call center agent and the customer.
 
-The `cdk.json` file tells the CDK Toolkit how to execute your app.
+The process starts by uploading the audio file to the S3 bucket. The lambda function will pick up the file and call Amazon Transcribe to convert speech to text. Another Lambda will capture transcription job completion status and will do the following:
 
-This project is set up like a standard Python project.  The initialization
-process also creates a virtualenv within this project, stored under the `.venv`
-directory.  To create the virtualenv it assumes that there is a `python3`
-(or `python` for Windows) executable in your path with access to the `venv`
-package. If for any reason the automatic creation of the virtualenv fails,
-you can create the virtualenv manually.
+1. Call Amazon Bedrock Large Language Model to get insights from the text. We capture the summary of the call, the tone of the call and the sentiment. The data provided in JSON format.
 
-To manually create a virtualenv on MacOS and Linux:
+2. JSON data is stored into Dynamo DB table
 
+3. JSON data is also being send by email. Email also contains the chain of thought that LLM took.
+
+# Prerequisites
+
+You need to install AWS CDK following this instructions https://docs.aws.amazon.com/cdk/v2/guide/getting_started.html.
+
+# Deployment
 ```
-$ python3 -m venv .venv
+cdk deploy CallCenterPyStack -f  --parameters snstopicemailparam=YOUR_EMAIL@dummy.com
 ```
+Note the "snstopicemailparam" parameter. This is the email address that you will get the JSON that is described above.
+ 
+Also note that before actually getting the JSON by email, you will get another email that asks you to verify your email.
 
-After the init process completes and the virtualenv is created, you can use the following
-step to activate your virtualenv.
+# Architecture
+<img width="819" alt="image" src="https://github.com/MichaelShapira/CallCenterPy/assets/135519473/e64e1651-dd57-49dd-a073-94e235166328">
 
-```
-$ source .venv/bin/activate
-```
 
-If you are a Windows platform, you would activate the virtualenv like this:
+# Customization
 
-```
-% .venv\Scripts\activate.bat
-```
+The summarization Lambda allows you to choose which model to use to get insights. By default, Claude Haiku is used.
+You can also specify the language that will be used to describe the chain of thought that the model followed.
 
-Once the virtualenv is activated, you can install the required dependencies.
+ <img width="797" alt="image" src="https://github.com/MichaelShapira/CallCenterPy/assets/135519473/59c8b8ef-20a9-4c0c-bc1c-628aa09e517e">
 
-```
-$ pip install -r requirements.txt
-```
+# Identify Objects
+At the end of the deployment process you can view the objects name in output section
+<img width="1178" alt="image" src="https://github.com/MichaelShapira/CallCenterPy/assets/135519473/5988cf94-2bcf-49a5-ba2d-123c4b64bc1c">
 
-At this point you can now synthesize the CloudFormation template for this code.
+# Getting Started
+Simply upload the audio file to the S3 bucket that appears in "CallCenterPyStack.UploadAudioFileToThisS3bucket" output value
 
-```
-$ cdk synth
-```
-
-To add additional dependencies, for example other CDK libraries, just add
-them to your `setup.py` file and rerun the `pip install -r requirements.txt`
-command.
-
-## Useful commands
-
- * `cdk ls`          list all stacks in the app
- * `cdk synth`       emits the synthesized CloudFormation template
- * `cdk deploy`      deploy this stack to your default AWS account/region
- * `cdk diff`        compare deployed stack with current state
- * `cdk docs`        open CDK documentation
-
-Enjoy!
