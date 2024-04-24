@@ -1,6 +1,7 @@
 import boto3
 import uuid
 import json
+import os
 
 def lambda_handler(event, context):
 
@@ -19,7 +20,7 @@ def lambda_handler(event, context):
     
     response = client.start_transcription_job(
         TranscriptionJobName=jobName,
-        LanguageCode='he-IL',
+        LanguageCode=os.environ.get('AUDIO_LANGUAGE'),
         Media={'MediaFileUri': s3Path},
         OutputBucketName=s3bucket,
         OutputKey=outputKey

@@ -35,6 +35,9 @@ class CallCenterPyStack(Stack):
                                     code=_lambda.Code.from_asset("./lambda/transcribe"),
                                     timeout=cdk.Duration.seconds(30),
                                     memory_size=256,
+                                    environment={ # ADD THIS, FILL IT FOR ACTUAL VALUE 
+                                                "AUDIO_LANGUAGE": "he-IL"
+                                            },
                                     role = transcribeLambdaRole
                                     )
 
