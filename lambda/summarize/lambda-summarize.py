@@ -74,7 +74,7 @@ def lambda_handler(event, context):
         
         Task 3: Determine if the call was resolved or not. A resolved call is one where nothing is left open, and the customer provided indications that the issue was resolved to their satisfaction. Classify the call outcome as Resolved, Not Resolved, or Unknown. Provide a direct short answer without explanations.
         
-        Do it step by step and describe your steps in "steps" JSON element by using {steps_language} language.
+        Do it step by step and describe your steps in "steps" JSON element by using """+steps_language+""" language.
         
         Your output should be in the following JSON format:
         {
