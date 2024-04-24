@@ -34,6 +34,10 @@ You can also specify the language that will be used to describe the chain of tho
 
  <img width="797" alt="image" src="https://github.com/MichaelShapira/CallCenterPy/assets/135519473/59c8b8ef-20a9-4c0c-bc1c-628aa09e517e">
 
+ The transcription Lambda allows you to specify the language of the audio file you want to analyze. The default language is "he-IL" (Hebrew)
+ <img width="839" alt="image" src="https://github.com/MichaelShapira/CallCenterPy/assets/135519473/b131436c-1266-47c5-b070-76f03d018407">
+
+
 # Identify Objects
 At the end of the deployment process you can view the objects name in output section
 <img width="1178" alt="image" src="https://github.com/MichaelShapira/CallCenterPy/assets/135519473/5988cf94-2bcf-49a5-ba2d-123c4b64bc1c">
