@@ -3,6 +3,7 @@ from aws_cdk import (
     aws_s3 as s3,
     aws_iam as iam,
     RemovalPolicy,
+   
     CfnOutput,
     CfnParameter,
     aws_dynamodb as dynamo,
@@ -17,6 +18,7 @@ from aws_cdk import (
 from constructs import Construct
 import uuid
 import aws_cdk as cdk
+from aws_cdk.aws_iam import PolicyStatement
 
 class CallCenterPyStack(Stack):
 
@@ -72,46 +74,55 @@ class CallCenterPyStack(Stack):
         sourceBucket.add_event_notification(s3.EventType.OBJECT_CREATED, notification)    
 
         table = dynamo.TableV2(self, "Table",
-              partition_key=dynamo.Attribute(name="s3_key", type=dynamo.AttributeType.STRING)
+              partition_key=dynamo.Attribute(name="s3_key", type=dynamo.AttributeType.STRING),
+              removal_policy= RemovalPolicy.DESTROY,
+              
         )
         summarizeLambdaRole = iam.Role(self, "SummarizeLambdaRole",
                      assumed_by=iam.ServicePrincipal("lambda.amazonaws.com"))
         summarizeLambdaRole.add_managed_policy(iam.ManagedPolicy.from_aws_managed_policy_name("service-role/AWSLambdaBasicExecutionRole"))
         
-        summarizeLambdaRole.add_to_policy(iam.PolicyStatement(
-                effect=iam.Effect.ALLOW,
-                resources=["*"],
-                actions=["bedrock:InvokeModel"]
-                
-            )) 
+        policyBedrock = iam.Policy(self, "BedrockPolicy")  
+        policyBedrock.add_statements(PolicyStatement(
+            effect=iam.Effect.ALLOW,
+            actions=["bedrock:InvokeModel"],
+            resources=["*"]
+        )) 
+        summarizeLambdaRole.attach_inline_policy(policyBedrock)
+    
+        policyDynamo = iam.Policy(self, "DynamoDBPolicy")  
+        policyDynamo.add_statements(PolicyStatement(
+            effect=iam.Effect.ALLOW,
+            actions=["dynamodb:PutItem"],
+            resources=[table.table_arn]
+        ))  
+        summarizeLambdaRole.attach_inline_policy(policyDynamo)
 
-        summarizeLambdaRole.add_to_policy(iam.PolicyStatement(
-                effect=iam.Effect.ALLOW,
-                actions=["dynamodb:PutItem"],
-                resources=[table.table_arn]
-                
-            ))
+        
+        policyTranscribe = iam.Policy(self, "TranscribePolicy")  
+        policyTranscribe.add_statements(PolicyStatement(
+            effect=iam.Effect.ALLOW,
+            actions=["transcribe:GetTranscriptionJob"],
+            resources=["*"]
+        )) 
+        summarizeLambdaRole.attach_inline_policy(policyTranscribe)
+      
 
-        summarizeLambdaRole.add_to_policy(iam.PolicyStatement(
-                effect=iam.Effect.ALLOW,
-                actions=["transcribe:GetTranscriptionJob"],
-                resources=["*"]
-                
-            )) 
-
-        summarizeLambdaRole.add_to_policy(iam.PolicyStatement(
-                effect=iam.Effect.ALLOW,
-                actions=["sns:Publish"],
-                resources=["*"]
-                
-            ))
-
-        summarizeLambdaRole.add_to_policy(iam.PolicyStatement(
-                effect=iam.Effect.ALLOW,
-                actions=["s3:GetObject"],
-                resources=["*"]
-                
-            )) 
+        policySNS = iam.Policy(self, "SNSPolicy")  
+        policySNS.add_statements(PolicyStatement(
+            effect=iam.Effect.ALLOW,
+            actions=["sns:Publish"],
+            resources=["*"]
+        )) 
+        summarizeLambdaRole.attach_inline_policy(policySNS)
+      
+        policyS3 = iam.Policy(self, "S3Policy")  
+        policyS3.add_statements(PolicyStatement(
+            effect=iam.Effect.ALLOW,
+            actions=["s3:GetObject"],
+            resources=["*"]
+        )) 
+        summarizeLambdaRole.attach_inline_policy(policyS3)
 
 
         sns_topic = sns.Topic(self, "CallCenterTopic")
@@ -126,7 +137,8 @@ class CallCenterPyStack(Stack):
                                     environment={ # ADD THIS, FILL IT FOR ACTUAL VALUE 
                                                 "MODEL_ID": "anthropic.claude-3-haiku-20240307-v1:0",
                                                 "SNS_TOPIC_ARN": sns_topic.topic_arn,
-                                                "STEPS_LANGUAGE": "Hebrew"
+                                                "STEPS_LANGUAGE": "Hebrew",
+                                                "DYNAMO_DB_TABLE": table.table_name
                                             },
                                     )              
 

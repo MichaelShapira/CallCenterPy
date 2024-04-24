@@ -8,7 +8,7 @@ transcribe_client = boto3.client("transcribe")
 s3_client = boto3.client('s3')
 bedrock_runtime = boto3.client("bedrock-runtime")
 dynamodb_client = boto3.resource('dynamodb')
-dynamo_table = dynamodb_client.Table('CallCenterCalls')
+dynamo_table = dynamodb_client.Table(os.environ.get('DYNAMO_DB_TABLE'))
 sns_client = boto3.client('sns')
 
 transcribeText=""
