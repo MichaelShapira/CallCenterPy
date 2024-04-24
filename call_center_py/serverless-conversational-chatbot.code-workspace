@@ -1,14 +1,3 @@
 {
-	"folders": [
-		{
-			"path": "../../../serverless-conversational-chatbot"
-		},
-		{
-			"path": "../../sa-activity-logging"
-		},
-		{
-			"path": ".."
-		}
-	],
-	"settings": {}
+  "dummy": 1
 }
