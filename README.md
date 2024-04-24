@@ -1,7 +1,7 @@
 
 # AWS CDK Project to deploy the solution to transcribe and summarize call center calls between agents and customers
 
-This repository represents the AWS CDK project, which, once deployed, provides a basec solution to transcribe the call between the call center agent and the customer.
+This repository represents the AWS CDK project, which, once deployed, provides a basic solution to transcribe the call between the call center agent and the customer.
 
 The process starts by uploading the audio file to the S3 bucket. The lambda function will pick up the file and call Amazon Transcribe to convert speech to text. Another Lambda will capture transcription job completion status and will do the following:
 
