@@ -60,7 +60,7 @@ Simply upload the audio file to the S3 bucket that appears in "CallCenterPyStack
         "בחנתי את תוצאת השיחה והגדרתי אותה כ'פתורה', מכיוון שהנציג של מוקד השירות זיכה את הלקוח על הקפה שלא קיבל, ולא נותר דבר פתוח."
     ],
     "transcribe_file": "https://s3.us-east-1.amazonaws.com/callcenterpystack-xxxxxxxxxxxxxxxx/transcripts/Phone.mp3-transcript.json", 
-    "s3_key": "s3: //callcenterpystack-xxxxxxxxxxxx/Phone.mp3"
+    "s3_key": "s3://callcenterpystack-xxxxxxxxxxxx/Phone.mp3"
 }
 ```
 
