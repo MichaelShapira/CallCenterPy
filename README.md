@@ -45,3 +45,22 @@ At the end of the deployment process you can view the objects name in output sec
 # Getting Started
 Simply upload the audio file to the S3 bucket that appears in "CallCenterPyStack.UploadAudioFileToThisS3bucket" output value
 
+# Sample Output
+```
+{
+    "call_sentiment": "Negative",
+    "call_tone": "Neutral",
+    "summary": "הלקוח לא קיבל את הקפה שהזמין באינטרנט והתקשר למוקד שירות הלקוחות כדי לטפל בכך.",
+    "call_outcome": "Resolved",
+    "steps": [
+        "ניתחתי את השיחה והגדרתי את הטון והסנטימנט של הלקוח כדלקמן:",
+        "- הטון של הלקוח הוא ניטרלי",
+        "- הסנטימנט של הלקוח הוא שלילי",
+        "יצרתי תקציר בעברית המתמקד בנושא העיקרי של השיחה, והוא שהלקוח לא קיבל את הקפה שהזמין באינטרנט והתקשר למוקד שירות הלקוחות כדי לטפל בכך.",
+        "בחנתי את תוצאת השיחה והגדרתי אותה כ'פתורה', מכיוון שהנציג של מוקד השירות זיכה את הלקוח על הקפה שלא קיבל, ולא נותר דבר פתוח."
+    ],
+    "transcribe_file": "https://s3.us-east-1.amazonaws.com/callcenterpystack-callcenteraudiofilessource5ddcf0-iddskcnxdo0l/transcripts/Phone.mp3-transcript.json", 
+    "s3_key": "s3: //callcenterpystack-callcenteraudiofilessource5ddcf0-iddskcnxdo0l/Phone.mp3"
+}
+```
+
