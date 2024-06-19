@@ -54,8 +54,22 @@ def lambda_handler(event, context):
           records=records[:-1]
          
           records = json.loads(records)
-          transcribeText=records['results']['transcripts'][0]['transcript']
-          
+          transcribeText = records['results']['transcripts'][0]['transcript']
+          items = records['results']['items']
+
+    # Generate text with speakers
+    current_speaker = items[0]['speaker_label']
+    # use a while loop to iterate through the items, unitl the next item's speaker_label is the same
+    i = 0
+    summarized_text = f"{current_speaker}: "
+    while i < len(items):
+        if items[i]['speaker_label'] == current_speaker:
+            summarized_text += " " + items[i]['alternatives'][0]['content']
+        else:
+            current_speaker = items[i]['speaker_label']
+            summarized_text += "\n" + f"{current_speaker}: " + items[i]['alternatives'][0]['content']
+        i += 1
+    
     # Model configuration
     model_id = os.environ.get('MODEL_ID')
     model_kwargs =  { 
@@ -68,7 +82,7 @@ def lambda_handler(event, context):
     system_prompt="""
         You are an AI assistant tasked with analyzing conversations between customer and call center agent. Your responsibilities are as follows:
     
-        Task 1: Analyze the provided conversation and identify the primary tone and sentiment expressed by the customer. Classify the tone as one of the following: Positive, Negative, Neutral, Humorous, Sarcastic, Enthusiastic, Angry, or Informative. Classify the sentiment as Positive, Negative, or Neutral. Provide a direct short answer without explanations.
+        Task 1: Analyze the provided conversation and identify the primary tone, and the primary sentiment expressed by the customer. Classify the tone as one of the following: Positive, Negative, Neutral, Humorous, Sarcastic, Enthusiastic, Angry, or Informative. Classify the sentiment as Positive, Negative, or Neutral. Provide a direct short answer without explanations.
         
         Task 2: Review the conversation and create a concise summary in Hebrew, focusing on the key topic discussed. Use clear and professional language, and describe the topic in one sentence, as if you are the customer service representative. Use a maximum of 20 words.
         
@@ -92,7 +106,7 @@ def lambda_handler(event, context):
         "anthropic_version": "bedrock-2023-05-31",
         "system": system_prompt,
         "messages": [
-            {"role": "user", "content": [{"type": "text", "text": transcribeText}]},
+            {"role": "user", "content": [{"type": "text", "text": summarized_text}]},
         ],
     }
     body.update(model_kwargs)
